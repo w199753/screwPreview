@@ -44,6 +44,35 @@
       };
     </script>
     <script>
+      // 重载 fetch 函数
+      const originalFetch = fetch;
+      fetch = function(url, data) {
+        console.log("URL received: " + url);
+
+        // 替换为你的服务器地址或地址模式
+        const allowedOrigins = [
+          'https://www.replacethatwithyourserveraddress.com/',
+          'http://localhost:4000',
+          'http://127.0.0.1:4000'
+        ];
+
+        const isAllowedOrigin = allowedOrigins.some(origin => url.indexOf(origin) === 0);
+
+        if (isAllowedOrigin) {
+          // 确保 data 是一个对象，如果不是，创建一个空对象
+          data = data || {};
+
+          // 合并 credentials 选项
+          data = {...data, ...{credentials: "include"}};
+          console.log("withCredentials set to true " + JSON.stringify(data) + " url: " + url);
+        } else {
+          console.log("withCredentials NOT SET for URL: " + url);
+        }
+
+        return originalFetch(url, data);
+      };
+    </script>
+    <script>
       var gameInstance;
       document.addEventListener('DOMContentLoaded', () => {
         var container = document.querySelector('#unity-container');
